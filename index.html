@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>住所検索</title>
+</head>
+<body>
+    <h1>住所検索</h1>
+
+    郵便番号：<input type="text" name="postal_code" id="postal_code" value="">
+    <input type="button" value="検索" id="search"><div id="error"></div>
+    <br>
+    都道府県：<input type="text" name="pref" id="pref" varlue="">
+    <br>
+    市区町村：<input type="text" name="address1" id="address1" value="">
+    <br>
+    町名：<input type="text" name="address2" id="address2" value="">
+
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+    $(function(){
+        $('#search').click(function(){
+            // console.log('a');//chromeディベロッパーツールのコンソールに出る
+            $.ajax('postal_search.php', 
+                {
+                type: 'post',
+                data: {
+                    postal_code: $('#postal_code').val(),
+                },
+                scriptCharset: 'utf-8',
+                dataType: 'json'//jsonで受け取り
+                }
+            )
+            .done(function(data){
+                // console.log('ok');
+                // console.log(data);
+                try{
+                    $("#error").text('');
+                    // var array = JSON.parse(data);
+                    // document.write(data.prefecture);
+                    $("#pref").val(data.prefecture);
+                    $("#address1").val(data.address1);
+                    $("#address2").val(data.address2);
+                }
+                catch(e)
+                {
+                    console.error(e);
+                }
+            })
+            .fail(function(jqXHR, textStatus, errorThrown){
+                $("#error").text('見つかりません。');
+                $("#pref").val('');
+                $("#address1").val('');
+                $("#address2").val('');
+            })
+        });
+    });
+    </script>
+</body>
+
+</html>
